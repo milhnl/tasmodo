@@ -35,7 +35,25 @@ tasmota_http_transport() {
         && printf 'Backlog %s' "$2" || printf '%s' "$2") | jq -sRr @uri)"
 }
 
+tasmodo_usage() {
+    printf '%s\n' \
+        'Usage: tasmodo [options...] <device...>' \
+        '' \
+        'Run commands on Tasmota devices' \
+        '' \
+        'Options:' \
+        '  -c <cmd>   Command to run. Multiple can be specified' \
+        '  -t <type>  Transport to use: http or mqtt (default)' \
+        '  -h <host>  MQTT broker. If not specified, tasmodo' \
+        '             will try the first found with mDNS' \
+        '' \
+        '  <device>   IP, Hostname or Topic as configured'
+}
+
 tasmodo() {
+    if [ $# -eq 0 ]; then
+        die "$(tasmodo_usage)"
+    fi
     while getopts "h:t:c:" OPT "$@"; do
         case "$OPT" in
         h) MQTT_HOST="$OPTARG" ;;
